@@ -9,10 +9,10 @@ var body_parser = require('body-parser');
 app.use(body_parser());
 
 app.use(express.static('static'));
-var view = require("./model");
+var model = require("./model");
 app.set('view engine', 'jade');
 
-var fs = require('fs');
+
 
 app.get('/', function(req, res) {
 
@@ -37,21 +37,13 @@ app.get('/about', function(req, res) {
 
 app.post('/add_post', function(req, res) {
     var title = req.body.title;
-    var body = req.body.body;
-    res.send('Your title: ' + title + '\nYour body: ' + body);
+    var content = req.body.content;
+    res.send('Your title: ' + title + '\nYour content: ' + content);
 
-    var blogs = require("./data.json");
-    blogs.next_id += 1;
-    var blog = {
-        id: blogs.next_id,
-        title: title,
-        body: body
-    };
-    blogs.articles.push(blog);
-
-    fs.writeFile("data.json", JSON.stringify(blogs), 'utf8', function() {
-        console.log("Stored in file");
-    });
+    var blog = model.get_blog();
+    var post = model.generate_post(model.get_new_id(blog), title, content);
+    model.add_post(blog, post);
+    model.store_blog(blog);
 });
 
 app.get('/add_post', function(req, res) {
@@ -67,16 +59,19 @@ app.post('/del_post/:num', function(req, res) {
 
 });
 
-app.get('/archives/:num', function(req, res) {
-
+app.get('/archives/', function(req, res) {
+    var blog = model.get_blog();
+    res.send(JSON.stringify(blog));
 });
 
 app.get('/tag/:tag_name/:num', function(req, res) {
 
 });
 
-app.get('/query/:condition', function(req, res) {
-
+app.get('/post/:title', function(req, res) {
+    var blog = model.get_blog();
+    var post = model.query_title(blog, req.param('title'));
+    res.send(JSON.stringify(post));
 });
 
 
