@@ -4,36 +4,30 @@
  */
 var fs = require('fs');
 
-exports.generate_post = function(id, title, content) {
-    return {
-        "id": id,
+exports.Blog = function() {
+    this.blog = require("./data.json");
+};
+
+exports.Blog.prototype.new_post = function(title, content) {
+    this.blog.articles.push({
+        "id": ++this.blog.next_id,
         "title": title,
-        "content": content
-    };
+        "content": content,
+        "date": Date.now()
+    });
 };
 
-exports.get_blog = function() {
-    return require("./data.json");
-};
-
-exports.store_blog = function(blog) {
-    fs.writeFile("data.json", JSON.stringify(blog), 'utf8', function() {
+exports.Blog.prototype.save = function() {
+    fs.writeFile("data.json", JSON.stringify(this.blog), 'utf8', function() {
         console.log("Stored in file");
     });
 };
 
-exports.add_post = function(blog, post) {
-    blog.articles.push(post);
-};
-
-exports.get_new_id = function(blog) {
-    return ++blog.next_id;
-};
-
-exports.query_title = function(blog, title) {
+exports.Blog.prototype.query = function(key, value) {
     var posts = [];
-    for (var i = 0; i < blog.articles.length; i++)
-       if (blog.articles[i].title == title)
-            posts.push(blog.articles[i]);
+    for (var i = 0; i < this.blog.articles.length; i++)
+        if (this.blog.articles[i][key] == value)
+            posts.push(this.blog.articles[i]);
     return posts;
 };
+

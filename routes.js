@@ -40,10 +40,9 @@ app.post('/add_post', function(req, res) {
     var content = req.body.content;
     res.send('Your title: ' + title + '\nYour content: ' + content);
 
-    var blog = model.get_blog();
-    var post = model.generate_post(model.get_new_id(blog), title, content);
-    model.add_post(blog, post);
-    model.store_blog(blog);
+    var blog = new model.Blog();
+    blog.new_post(title, content);
+    blog.save();
 });
 
 app.get('/add_post', function(req, res) {
@@ -51,8 +50,14 @@ app.get('/add_post', function(req, res) {
 });
 
 
-app.post('/edit_post/:num',function(req, res) {
+app.post('/edit_post/:id',function(req, res) {
+    var blog = new model.Blog();
+    var post = blog.query('id', req.param('id'));
 
+    var title = req.body.title;
+    var content = req.body.content;
+    post[0].title = title;
+    post[0].content = content;
 });
 
 app.post('/del_post/:num', function(req, res) {
@@ -60,8 +65,6 @@ app.post('/del_post/:num', function(req, res) {
 });
 
 app.get('/archives/', function(req, res) {
-    var blog = model.get_blog();
-    res.send(JSON.stringify(blog));
 });
 
 app.get('/tag/:tag_name/:num', function(req, res) {
@@ -69,8 +72,8 @@ app.get('/tag/:tag_name/:num', function(req, res) {
 });
 
 app.get('/post/:title', function(req, res) {
-    var blog = model.get_blog();
-    var post = model.query_title(blog, req.param('title'));
+    var blog = new model.Blog();
+    var post = blog.query('title', req.param('title'));
     res.send(JSON.stringify(post));
 });
 
