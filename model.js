@@ -1,25 +1,40 @@
 /**
  *
  * Created by lw on 15-8-2.
+ * ATTENTION: Blog object has to be improved and corrected.
+ *
  */
-var fs = require('fs');
 
 exports.Blog = function() {
-    this.blog = require("./data.json");
+    this.articles = require("./data/data.json");
+    var max_id = 0;
+    for(var i = 0; this.articles.length; i++)
+        max_id = Math.max(max_id, this.articles[i].id);
+    this.next_id = max_id;
 };
 
+
 exports.Blog.prototype.new_post = function(title, content) {
-    this.blog.articles.push({
-        "id": ++this.blog.next_id,
+    //var time = require('./timestamp');
+    this.articles.push({
+        "id": ++this.next_id,
         "title": title,
         "content": content,
-        "date": Date.now()
+        "is_deleted": false
+        //"date": time.timestamp()
     });
 };
 
 exports.Blog.prototype.save = function() {
-    fs.writeFile("data.json", JSON.stringify(this.blog), 'utf8', function() {
-        console.log("Stored in file");
+    var fs = require('fs');
+    var posts = this.articles;
+    var stream = fs.createWriteStream("./data/data.json");
+    stream.once('open', function() {
+        stream.write('[');
+        for (var i = 0; i < posts.length; i++)
+            if (!posts[i].is_deleted)
+                stream.write(JSON.stringify(posts[i] + ','));
+        steam.write(']');
     });
 };
 
@@ -31,3 +46,14 @@ exports.Blog.prototype.query = function(key, value) {
     return posts;
 };
 
+exports.Blog.prototype.delete = function(id) {
+    var posts = this.query('id', id);
+    if (posts.length)
+        posts.is_deleted = true;
+};
+
+exports.Blog.prototype.modify = function(id, title, content) {
+    var posts = this.query('id', id);
+    posts[0].title = title;
+    posts[0].content = content;
+};

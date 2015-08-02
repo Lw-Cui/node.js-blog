@@ -56,12 +56,17 @@ app.post('/edit_post/:id',function(req, res) {
 
     var title = req.body.title;
     var content = req.body.content;
-    post[0].title = title;
-    post[0].content = content;
+    if (post.length) {
+        post[0].title = title;
+        post[0].content = content;
+        blog.save();
+    }
 });
 
-app.post('/del_post/:num', function(req, res) {
-
+app.get('/del_post/:id', function(req, res) {
+    var blog = new model.Blog();
+    blog.delete(parseInt(parseInt(req.param('id'))));
+    blog.save();
 });
 
 app.get('/archives/', function(req, res) {
