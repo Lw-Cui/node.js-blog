@@ -2,32 +2,30 @@
  *
  * Created by lw on 15-8-2.
  */
-var fs = require('fs');
 
-exports.Blog = function() {
-    this.blog = require("./data.json");
-};
 
-exports.Blog.prototype.new_post = function(title, content) {
-    this.blog.articles.push({
-        "id": ++this.blog.next_id,
-        "title": title,
-        "content": content,
-        "date": Date.now()
+exports.Blog = function () {
+    this.sql = require('mysql');
+    this.connection = this.sql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'greatclw',
+        database: 'blog'
     });
+    this.connection.connect();
 };
 
-exports.Blog.prototype.save = function() {
-    fs.writeFile("data.json", JSON.stringify(this.blog), 'utf8', function() {
-        console.log("Stored in file");
-    });
+exports.Blog.prototype.new_post = function (title, content) {
+
+    var str =
+        'INSERT INTO blog VALUES(NULL, "' + title + '", "' + content + '");';
+    console.log(str);
+    this.connection.query(str);
 };
 
-exports.Blog.prototype.query = function(key, value) {
-    var posts = [];
-    for (var i = 0; i < this.blog.articles.length; i++)
-        if (this.blog.articles[i][key] == value)
-            posts.push(this.blog.articles[i]);
-    return posts;
+exports.Blog.prototype.save = function () {
+};
+
+exports.Blog.prototype.query = function (key, value) {
 };
 
