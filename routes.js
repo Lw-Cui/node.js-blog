@@ -55,7 +55,10 @@ app.post('/edit_post/:id', function (req, res) {
     blog.query('id', req.param('id'));
 });
 
-app.post('/del_post/:id', function (req, res) {
+app.get('/del_post/:id', function (req, res) {
+    blog.query('id', req.param('id'));
+    blog.delete(Number(req.param('id')));
+    blog.query('id', req.param('id'));
 });
 
 app.get('/archives/', function (req, res) {

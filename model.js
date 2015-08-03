@@ -34,7 +34,14 @@ exports.Blog.prototype.query = function (key, value) {
 
 exports.Blog.prototype.edit = function (id, title, content) {
     var str =
-        'UPDATA blog SET title="' + title + '", content="' + content + '"' + 'WHERE id="' + id + '";';
+        'UPDATE blog SET title="' + title + '", content="' + content + '"' + 'WHERE id=' + id + ';';
+    console.log(str);
+    this.connection.query(str);
+};
+
+exports.Blog.prototype.delete = function (id) {
+    var str =
+        'DELETE FROM blog WHERE id=' + id + ';'
     console.log(str);
     this.connection.query(str);
 };
