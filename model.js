@@ -8,7 +8,7 @@
 exports.Blog = function() {
     this.articles = require("./data/data.json");
     var max_id = 0;
-    for(var i = 0; this.articles.length; i++)
+    for(var i = 0; i < this.articles.length; i++)
         max_id = Math.max(max_id, this.articles[i].id);
     this.next_id = max_id;
 };
@@ -28,21 +28,26 @@ exports.Blog.prototype.new_post = function(title, content) {
 exports.Blog.prototype.save = function() {
     var fs = require('fs');
     var posts = this.articles;
+    console.log(JSON.stringify(posts[0]));
     var stream = fs.createWriteStream("./data/data.json");
     stream.once('open', function() {
         stream.write('[');
-        for (var i = 0; i < posts.length; i++)
+        for (var i = 0; i < posts.length; i++) {
             if (!posts[i].is_deleted)
-                stream.write(JSON.stringify(posts[i] + ','));
-        steam.write(']');
+                stream.write(JSON.stringify(posts[i]));
+            if (i != posts.length - 1)
+                stream.write(',');
+        }
+        stream.write(']');
+        stream.end();
     });
 };
 
 exports.Blog.prototype.query = function(key, value) {
     var posts = [];
-    for (var i = 0; i < this.blog.articles.length; i++)
-        if (this.blog.articles[i][key] == value)
-            posts.push(this.blog.articles[i]);
+    for (var i = 0; i < this.articles.length; i++)
+        if (this.articles[i][key] == value)
+            posts.push(this.articles[i]);
     return posts;
 };
 
