@@ -23,10 +23,18 @@ exports.Blog.prototype.new_post = function (title, content) {
     this.connection.query(str);
 };
 
-exports.Blog.prototype.save = function () {
-};
-
 exports.Blog.prototype.query = function (key, value) {
-
+    var str =
+        'SELECT * FROM blog WHERE ' + key + '="' + value + '";';
+    console.log(str);
+    this.connection.query(str, function(error, results, fields) {
+        console.log(results);
+    })
 };
 
+exports.Blog.prototype.edit = function (id, title, content) {
+    var str =
+        'UPDATA blog SET title="' + title + '", content="' + content + '"' + 'WHERE id="' + id + '";';
+    console.log(str);
+    this.connection.query(str);
+};

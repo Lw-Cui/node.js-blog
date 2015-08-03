@@ -12,6 +12,7 @@ app.use(express.static('static'));
 var model = require("./model");
 app.set('view engine', 'jade');
 
+var blog = new model.Blog();
 
 app.get('/', function (req, res) {
 
@@ -38,10 +39,7 @@ app.post('/add_post', function (req, res) {
     var title = req.body.title;
     var content = req.body.content;
     res.send('Your title: ' + title + '\nYour content: ' + content);
-
-    var blog = new model.Blog();
     blog.new_post(title, content);
-    blog.save();
 });
 
 app.get('/add_post', function (req, res) {
@@ -50,17 +48,14 @@ app.get('/add_post', function (req, res) {
 
 
 app.post('/edit_post/:id', function (req, res) {
-    var blog = new model.Blog();
-    var post = blog.query('id', req.param('id'));
-
+    blog.query('id', req.param('id'));
     var title = req.body.title;
     var content = req.body.content;
-    post[0].title = title;
-    post[0].content = content;
+    blog.edit(Number(req.param('id')), title, content);
+    blog.query('id', req.param('id'));
 });
 
-app.post('/del_post/:num', function (req, res) {
-
+app.post('/del_post/:id', function (req, res) {
 });
 
 app.get('/archives/', function (req, res) {
@@ -71,11 +66,14 @@ app.get('/tag/:tag_name/:num', function (req, res) {
 });
 
 app.get('/post/:title', function (req, res) {
-    var blog = new model.Blog();
     var post = blog.query('title', req.param('title'));
     res.send(JSON.stringify(post));
 });
 
+app.get('/post_id/:id', function (req, res) {
+    var post = blog.query('id', Number(req.param('id')));
+    res.send(JSON.stringify(post));
+});
 
 var port = 3000;
 
