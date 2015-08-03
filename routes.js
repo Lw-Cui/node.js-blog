@@ -34,7 +34,7 @@ app.post('/register', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
     auth.register(username, password);
-    req.send(username + " Register successfully\n");
+    res.send(username + " registers successfully\n");
 });
 
 app.post('/login', function (req, res) {
@@ -43,7 +43,7 @@ app.post('/login', function (req, res) {
     auth.login(username, password, function (id) {
         if (id != -1) {
             req.session.user_id = id;
-            res.send("you are logged in successfully\n");
+            res.send("user No." + id + " log in\n");
         } else {
             res.send("username doesn't match password\n");
         }
@@ -51,8 +51,9 @@ app.post('/login', function (req, res) {
 });
 
 app.get('/logout', function (req, res) {
+    var user_id = req.session.user_id;
     delete req.session.user_id;
-    res.send("log out\n");
+    res.send('user No.' + user_id + 'log out\n');
 });
 
 
@@ -60,20 +61,25 @@ app.post('/add_post', checkAuth, function (req, res) {
     var title = req.body.title;
     var content = req.body.content;
     blog.new_post(title, content, req.session.user_id);
-    res.send("you are operating as " + req.session.user_id + 'to add post\n');
+    res.send("user No." + req.session.user_id
+        + ' add post named ' + title + '\n');
 });
 
 
 app.post('/edit_post/:id', checkAuth, function (req, res) {
+    var user_id = req.session.user_id;
+    var article_id = req.param('id');
     var title = req.body.title;
     var content = req.body.content;
-    blog.edit(Number(req.param('id')), title, content);
-    res.send("you are operating as " + req.session.user_id  + 'edit post\n');
+    blog.edit(article_id, user_id, title, content);
+    res.send("user No." + user_id  + ' edit post which id is ' + article_id + '\n');
 });
 
 app.get('/del_post/:id', checkAuth, function (req, res) {
-    blog.delete(Number(req.param('id')));
-    res.send("you are operating as " + req.session.user_id + 'delete post\n');
+    var user_id = req.session.user_id;
+    var article_id = req.param('id');
+    blog.delete(article_id, user_id);
+    res.send("user No." + user_id  + ' edit post which id is ' + article_id + '\n');
 });
 
 

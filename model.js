@@ -63,16 +63,18 @@ exports.Blog.prototype.query = function (key, value, show) {
     });
 };
 
-exports.Blog.prototype.edit = function (id, title, content) {
+exports.Blog.prototype.edit = function (article_id, user_id, title, content) {
     var str =
-        'UPDATE article SET title="' + title + '", content="' + content + '"' + 'WHERE article_id=' + id + ';';
+        'UPDATE article SET title="' + title + '", content="' + content + '"'
+        + 'WHERE article_id=' + article_id + ' and user_id =' +user_id + ';';
     console.log(str);
     this.connection.query(str);
 };
 
-exports.Blog.prototype.delete = function (id) {
+exports.Blog.prototype.delete = function (article_id, user_id) {
     var str =
-        'DELETE FROM article WHERE article_id=' + id + ';';
+        'DELETE FROM article WHERE article_id=' + article_id
+        + ' and user_id =' + user_id + ';';
     console.log(str);
     this.connection.query(str);
 };
@@ -80,5 +82,6 @@ exports.Blog.prototype.delete = function (id) {
 exports.Blog.prototype.register = function (username, password) {
     var str =
         'INSERT INTO user VALUES(NULL, "' + username + '", "' + pasword + '");';
-
+    console.log(str);
+    this.connection.query(str);
 };
