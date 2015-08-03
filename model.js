@@ -27,5 +27,6 @@ exports.Blog.prototype.save = function () {
 };
 
 exports.Blog.prototype.query = function (key, value) {
+
 };
 
